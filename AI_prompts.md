@@ -199,4 +199,4 @@ What was lacking: provider safety blocks looked like crashes, and the bot invent
 
 > Get this ready to submit. Check the folder matches the required layout (`AI_prompts.md`, `requirements.txt`, `.env.example`, `.gitignore`, `README.md`, `frontend/`, `backend/` with the four agent files, and `output/` with harness, design, usability, app_check + images, and the audit trail). Write a `README.md` that explains what the project is and exactly how to run the back end and front end after dropping in the data pack. Make sure `.gitignore` really keeps out `.env`, `campus_customs.db`, the product images, `.venv`, and `node_modules`: actually check it with git, don't just assume. Then make the first commit and push it to a new public GitHub repo so I can submit the URL on Canvas.
 
-**Follow-up:** _(if needed)_
+**Follow-up:** None needed. `git check-ignore` confirmed `.env`, the database, product images, `.venv`, and `node_modules` are excluded, a scan found no keys in the staged files, and the repo is public at https://github.com/Yong-Sung-Park/campus-customs-hw4.
