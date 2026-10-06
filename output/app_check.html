@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Campus Customs — App Check</title>
+  <style>
+    :root { --navy: #00356b; --ink: #1b2333; --muted: #5e6675; --paper: #f6f2ea; --card: #fffdf9; --line: #e6dfd2; --ok: #1a7f37; }
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: system-ui, -apple-system, "Segoe UI", sans-serif; background: var(--paper); color: var(--ink); line-height: 1.55; }
+    header { background: var(--navy); color: #fff; padding: 2rem 1rem; }
+    header h1 { margin: 0 0 .3rem; font-family: Georgia, serif; }
+    header p { margin: 0; opacity: .85; }
+    main { max-width: 1000px; margin: 0 auto; padding: 1.5rem 1rem 3rem; }
+    nav ol { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 1rem 1rem 1rem 2.2rem; }
+    section { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 1.25rem 1.25rem 1.5rem; margin: 1.5rem 0; }
+    section h2 { margin-top: 0; color: var(--navy); font-family: Georgia, serif; }
+    .tag { display: inline-block; font-size: .75rem; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; background: #e8eef7; color: var(--navy); padding: .15rem .55rem; border-radius: 999px; margin-right: .3rem; }
+    img { width: 100%; height: auto; border: 1px solid var(--line); border-radius: 8px; display: block; margin: .75rem 0; }
+    .proof { border-left: 4px solid var(--ok); padding: .25rem .9rem; background: #f1f8f2; border-radius: 0 8px 8px 0; }
+    table { border-collapse: collapse; margin: .5rem 0; font-size: .92rem; }
+    th, td { border: 1px solid var(--line); padding: .3rem .6rem; text-align: center; }
+    th { background: #eef2f8; }
+    .sold { color: #b42318; font-weight: 700; }
+    code { background: #eef2f8; padding: .05rem .3rem; border-radius: 4px; }
+    footer { color: var(--muted); font-size: .9rem; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Campus Customs — App Check</h1>
+    <p>Live test of the running site (React + Vite on :5173, FastAPI + PydanticAI agent on :8000, model <code>gpt-5.6-luna</code> via Portkey). Screenshots are in <code>app_check_images/</code>.</p>
+  </header>
+  <main>
+    <nav>
+      <ol>
+        <li><a href="#inventory">Chat checks an item's inventory level (honest stock + price from the DB)</a></li>
+        <li><a href="#cards">Dynamic search-result cards after a category question</a></li>
+        <li><a href="#card-detail">Chat cards still open the single-item page</a></li>
+        <li><a href="#usability">Usability feature: product finder (Problem 9, front end)</a></li>
+        <li><a href="#alternatives">Bonus usability feature: sold-out size → in-stock alternatives (Problem 9, agent)</a></li>
+      </ol>
+    </nav>
+
+    <section id="inventory">
+      <h2>1. Chat checks the inventory level of an item</h2>
+      <span class="tag">Problem 6</span><span class="tag">Problem 8 page context</span><span class="tag">Problem 9 "Ask about this item"</span>
+      <img src="app_check_images/inventory.jpg" alt="Product page for the Ice Hockey Left Chest Hoodie with the chat answering which sizes are in stock" />
+      <p>On the <strong>Ice Hockey Left Chest Hoodie</strong> page I clicked <em>Ask about this item</em> ("Which sizes of this are in stock right now?"). The agent knew "this" meant the hoodie on screen (page context), called <code>check_stock</code>, and answered: <em>"in stock in XS, S, and XXL. M, L, and XL are sold out right now."</em></p>
+      <p>Database truth (<code>inventory</code> and <code>catalogue</code> tables):</p>
+      <table>
+        <tr><th>Size</th><th>XS</th><th>S</th><th>M</th><th>L</th><th>XL</th><th>XXL</th><th>Price</th></tr>
+        <tr><th>Qty</th><td>20</td><td>8</td><td class="sold">0</td><td class="sold">0</td><td class="sold">0</td><td>25</td><td>$68.00</td></tr>
+      </table>
+      <p class="proof"><strong>Proves:</strong> the stock answer matches the database exactly. All three sold-out sizes are named as sold out, and nothing is invented. The size tiles on the page (struck-through XL, "Sold out") show the same data.</p>
+    </section>
+
+    <section id="cards">
+      <h2>2. Dynamic search-result cards appear after a category question</h2>
+      <span class="tag">Problem 7</span>
+      <img src="app_check_images/hoodie_cards.jpg" alt="Picked for you by chat panel showing hoodie product cards after asking what hoodies do you have" />
+      <p>I asked <em>"What hoodies do you have?"</em> (via a chat starter chip). The agent called <code>search_products(category="hoodie")</code>, found 27 hoodies, and returned 8 <code>product_ids</code>. The backend built the cards from the database, and the site rendered them in the <strong>"Picked for you by chat"</strong> panel at the top of the page. The chat bubble notes "↑ 8 items shown on the page".</p>
+      <p class="proof"><strong>Proves:</strong> the API contract works end to end. The agent returns structured product matches, and the front end renders real cards with image, name, price ($45 / $68 from the DB), and a short description.</p>
+    </section>
+
+    <section id="card-detail">
+      <h2>3. Chat cards still open the single-item page</h2>
+      <span class="tag">Problem 7 Panel B</span>
+      <img src="app_check_images/card_opens_detail.jpg" alt="Single-item page for Yale Sports Hoodie Tennis opened from a chat card, with the chat picks kept as a compact strip above" />
+      <p>Clicking the <em>Yale Sports Hoodie Tennis</em> card from the chat panel opened <code>/products/yale-sports-hoodie-tennis</code>, the same single-item page from Problem 3 (large image, full description, price, colors, size stock). The chat picks stay above as a compact strip, so the shopper can jump to another one.</p>
+      <p class="proof"><strong>Proves:</strong> dynamically added cards behave exactly like catalogue cards.</p>
+    </section>
+
+    <section id="usability">
+      <h2>4. Usability feature: product finder (search, category chips, size-in-stock, sort)</h2>
+      <span class="tag">Problem 9 · front end #1</span>
+      <img src="app_check_images/usability_finder.jpg" alt="Products page filtered to Hoodies with M in stock showing 21 of 102 items" />
+      <p>On <code>/products</code> I clicked the <strong>Hoodies</strong> chip (27) and chose <strong>"M in stock"</strong>. The grid shows <strong>21 of 102</strong> items. The 6 hoodies whose M is sold out (Crew Left Chest, Ice Hockey Left Chest, The Forest School, Yale Grandma, Yale Sports Soccer, Yale Sports Swimming) are hidden, so the shopper only sees what they can actually buy.</p>
+      <p class="proof"><strong>Proves:</strong> the finder from <code>usability.md</code> is live. Category chips use the normalized category, and the size filter uses real per-size stock.</p>
+    </section>
+
+    <section id="alternatives">
+      <h2>5. Bonus: sold-out size → in-stock alternatives</h2>
+      <span class="tag">Problem 9 · agent #1 <code>find_alternatives</code></span><span class="tag">Problem 9 · front end #2 starter chips</span>
+      <img src="app_check_images/alternatives.jpg" alt="Chat says M is sold out and shows four similar hoodies that have M in stock as cards" />
+      <p>Still on the Ice Hockey hoodie page, I tapped the starter chip <em>"Is this in stock in M?"</em>. The agent said M is sold out, then called <code>find_alternatives(product, "M")</code> and put 4 similar hoodies <strong>that have M in stock</strong> on the page. DB check for size M: Squash 5, Volleyball 2, Sailing 25, Yale Dad 12, all $68.00.</p>
+      <p class="proof"><strong>Proves:</strong> no dead ends. A sold-out answer comes with real, in-stock options, and every price shown passed the price guard.</p>
+    </section>
+
+    <footer>Tested on 2026-10-05 against the local data pack. Logged in as a test account ("Hi, Bulldog"), so chat history was saved to <code>chat_messages</code> and reloaded after a page refresh (Problem 8).</footer>
+  </main>
+</body>
+</html>

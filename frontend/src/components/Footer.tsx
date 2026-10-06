@@ -1,0 +1,13 @@
+export default function Footer() {
+  return (
+    <footer className="footer">
+      <div className="footer-inner">
+        <div>
+          <strong>Campus Customs</strong>
+          <p>57 Broadway, New Haven, CT 06511</p>
+        </div>
+        <p className="footer-note">Homework 4 demo storefront. Prices and stock come from the local catalogue database.</p>
+      </div>
+    </footer>
+  )
+}

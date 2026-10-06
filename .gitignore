@@ -1,0 +1,21 @@
+# Course data — do not commit
+data/
+*.db
+
+# Secrets
+.env
+.env.*
+!.env.example
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Node
+node_modules/
+dist/
+
+# Local tooling
+.claude/
