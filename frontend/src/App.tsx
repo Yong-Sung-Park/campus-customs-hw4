@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import { Route, Routes, useLocation } from 'react-router-dom'
 import NavBar from './components/NavBar.tsx'
 import Ticker from './components/Ticker.tsx'
@@ -14,6 +15,11 @@ import NotFound from './pages/NotFound.tsx'
 
 export default function App() {
   const { pathname } = useLocation()
+
+  // New page starts at the top (React Router keeps the old scroll position otherwise).
+  useEffect(() => {
+    window.scrollTo(0, 0)
+  }, [pathname])
   return (
     <div className="app">
       <NavBar />

@@ -117,6 +117,12 @@ What was lacking: the first safety rule was too soft, so the agent turned down t
 
 What was lacking: the first version could still suggest made-up alternatives, and it replaced useful search results with a redundant card.
 
+**Follow-up 2:**
+
+> After I ask the chat something, clicking Home or About Us looks like nothing happens. The big "Picked for you" panel fills the whole first screen on every page, and the page also keeps my old scroll position. Show the full panel only on the page where I asked. Once I go to another page, shrink it to the small strip so the new page is actually visible, and start every new page at the top.
+
+What was lacking: the chat results panel covered every page, so the nav links looked broken.
+
 ---
 
 ## Problem 8: Customer memory

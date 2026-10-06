@@ -4,11 +4,12 @@ import ProductCard from './ProductCard.tsx'
 
 /** Product cards the chat agent found, shown at the top of whatever page the shopper is on. */
 export default function ChatPicks() {
-  const { picks, picksFor, clearPicks } = useChat()
+  const { picks, picksFor, picksPath, clearPicks } = useChat()
   const { pathname } = useLocation()
   if (picks.length === 0) return null
-  // On a product page, shrink to a one-row strip so the item itself stays in view.
-  const compact = pathname.startsWith('/products/')
+  // Full grid only on the page where the shopper asked. Anywhere else (including
+  // product pages) it shrinks to a one-row strip so the page's own content is visible.
+  const compact = pathname !== picksPath || pathname.startsWith('/products/')
 
   return (
     <section className={`picks${compact ? ' picks-compact' : ''}`} aria-label="Products picked by chat">

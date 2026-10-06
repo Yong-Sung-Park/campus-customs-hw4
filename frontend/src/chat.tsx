@@ -17,6 +17,8 @@ interface ChatState {
   /** Product cards from the latest chat answer, shown on the page. */
   picks: ProductCardData[]
   picksFor: string
+  /** Path of the page where the picks were requested (full panel there, compact strip elsewhere). */
+  picksPath: string
   clearPicks: () => void
 }
 
@@ -36,6 +38,7 @@ export function ChatProvider({ children }: { children: ReactNode }) {
   const [sending, setSending] = useState(false)
   const [picks, setPicks] = useState<ProductCardData[]>([])
   const [picksFor, setPicksFor] = useState('')
+  const [picksPath, setPicksPath] = useState('')
   const messagesRef = useRef(messages)
   messagesRef.current = messages
   const { user } = useAuth()
@@ -45,6 +48,11 @@ export function ChatProvider({ children }: { children: ReactNode }) {
   const pageRef = useRef<PageInfo>({ path: '/', product_id: null })
   const productMatch = location.pathname.match(/^\/products\/([^/]+)$/)
   pageRef.current = { path: location.pathname, product_id: productMatch ? decodeURIComponent(productMatch[1]) : null }
+
+  // Once the shopper navigates away from where they asked, keep the picks compact everywhere.
+  useEffect(() => {
+    setPicksPath((p) => (p === location.pathname ? p : ''))
+  }, [location.pathname])
 
   // Logged in: reload the saved conversation. Logged out: start fresh.
   const userId = user?.id ?? null
@@ -86,6 +94,7 @@ export function ChatProvider({ children }: { children: ReactNode }) {
       if (shown.length > 0) {
         setPicks(res.products)
         setPicksFor(text)
+        setPicksPath(pageRef.current.path)
       }
     } catch (err) {
       const message = (err as Error).message
@@ -102,7 +111,7 @@ export function ChatProvider({ children }: { children: ReactNode }) {
   const clearPicks = useCallback(() => setPicks([]), [])
 
   return (
-    <ChatContext.Provider value={{ open, setOpen, messages, sending, send, picks, picksFor, clearPicks }}>
+    <ChatContext.Provider value={{ open, setOpen, messages, sending, send, picks, picksFor, picksPath, clearPicks }}>
       {children}
     </ChatContext.Provider>
   )
